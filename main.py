@@ -61,31 +61,31 @@ def create_customer():
 
     if not resp.ok:
         print(resp.reason)
-        return None
+        return resp.json()
     
-    return resp.json()
+    return resp.json()['objectCreated']
 
-
-def create_savings_account():
-    url = base_url + 'customers/{}/accounts'.format(customerId)
+def create_credit_account(customerId):
+    url = base_url + '/customers/{}/accounts'.format(customerId)
     payload = {
-    "type": "Savings",
-    "nickname": "test",
-    "rewards": 10000,
-    "balance": 10000,	
+    "type": "Credit Card",
+    "nickname": "Savor",
+    "rewards": 500,
+    "balance": 300,
     }
-    # Create a Savings Account
-    response = requests.post( 
+    # Create a Credit Card Account
+    resp = requests.post( 
         url, 
         data=json.dumps(payload),
         headers={'content-type':'application/json'},
         params={'key': apiKey}
         )
 
-    if response.status_code == 201:
-        print('account created')
-    else:
-        print(response.text)
+    if not resp.ok:
+        print(resp.reason)
+        return resp.json()
+    
+    return resp.json()['objectCreated']
 
 def main():
     # # Get all atms within a 2 mile radius of Mclean
@@ -96,8 +96,13 @@ def main():
     # atms = get_atms(lat, lng, rad)
     # print(atms)
 
+    # Create a Customer
     cust = create_customer()
     print(cust)
+
+    # Create a credit card for said customer
+    credit_acc = create_credit_account(cust['_id'])
+    print(credit_acc)
         
 if __name__ == "__main__":
     main()
