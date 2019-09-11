@@ -34,22 +34,11 @@ def get_atms(lat=0, lng=0, rad=1):
 
     return atms
 
-def create_customer():
+def create_customer(payload):
     url = base_url + '/customers'
 
     params = {
         'key' : apiKey,
-    }
-    payload = {
-        'first_name' : 'Luffy',
-        'last_name' : 'Monkey',
-        'address' : {
-            'street_number' : '2222',
-            'street_name': 'Ocean Lane',
-            'city' : 'Water Seven',
-            'state' : 'MI',
-            'zip' : '48105'
-        }
     }
 
     resp = requests.post(
@@ -87,6 +76,28 @@ def create_credit_account(customerId):
     
     return resp.json()['objectCreated']
 
+def create_bill(accountID):
+    url = base_url + '/accounts/{}/bills'.format(accountID)
+    payload = {
+    'status' : 'pending',
+    'payee' : 'Kaido Enterprise',
+    'payment_amount' : 1738.42
+    }
+
+    # Create a Credit Card Account
+    resp = requests.post( 
+        url, 
+        data=json.dumps(payload),
+        headers={'content-type':'application/json'},
+        params={'key': apiKey}
+        )
+
+    if not resp.ok:
+        print(resp.reason)
+        return resp.json()
+    
+    return resp.json()['objectCreated']
+
 def main():
     # # Get all atms within a 2 mile radius of Mclean
     # # Long & Lat for Mclean
@@ -97,12 +108,27 @@ def main():
     # print(atms)
 
     # Create a Customer
-    cust = create_customer()
+    cust_info = {
+        'first_name' : 'Luffy',
+        'last_name' : 'Monkey',
+        'address' : {
+            'street_number' : '2222',
+            'street_name': 'Ocean Lane',
+            'city' : 'Water Seven',
+            'state' : 'MI',
+            'zip' : '48105'
+        }
+    }
+    cust = create_customer(cust_info)
     print(cust)
 
     # Create a credit card for said customer
     credit_acc = create_credit_account(cust['_id'])
     print(credit_acc)
-        
+
+    # Create a bill for said credit card
+    bill = create_bill(credit_acc['_id'])
+    print(bill)
+
 if __name__ == "__main__":
     main()
