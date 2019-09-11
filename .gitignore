@@ -106,3 +106,4 @@ venv.bak/
 # testing
 out.json
 out.py
+out.html
