@@ -106,8 +106,8 @@ def create_deposit(accountID):
     # Create a deposit
     return make_post(url, payload)
 
-def enterprise_get_accounts():
-    url = base_url + '/enterprise/accounts'
+def enterprise_get_account(accountID):
+    url = base_url + '/enterprise/accounts/{}'.format(accountID)
 
     params = {
         'key' : apiKey,
@@ -120,10 +120,28 @@ def enterprise_get_accounts():
 
     if not resp.ok:
         print(resp.reason)
+    
+    return resp.json()
+
+def delete_account(accountID):
+    url = base_url + '/accounts/{}'.format(customerId)
+    
+    params = {
+        'key' : apiKey,
+    }
+
+    resp = requests.delete(
+        url,
+        headers={'content-type':'application/json'},
+        params=params
+    )
+
+    if not resp.ok:
+        print(resp.reason)
         return resp.json()
     
     return resp.json()['results']
-
+    
 def main():
     # # Get all atms within a 2 mile radius of Mclean
     # # Long & Lat for Mclean
@@ -164,8 +182,8 @@ def main():
     deposit = create_deposit(credit_acc['_id'])
     print(deposit)
 
-    # Get all enterprise accounts
-    ent_accounts = enterprise_get_accounts()
+    # Get an enterprise account
+    ent_accounts = enterprise_get_account(credit_acc['_id'])
     print(ent_accounts)
 
 if __name__ == "__main__":
