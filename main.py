@@ -124,7 +124,7 @@ def enterprise_get_account(accountID):
     return resp.json()
 
 def delete_account(accountID):
-    url = base_url + '/accounts/{}'.format(customerId)
+    url = base_url + '/accounts/{}'.format(accountID)
     
     params = {
         'key' : apiKey,
@@ -140,7 +140,7 @@ def delete_account(accountID):
         print(resp.reason)
         return resp.json()
     
-    return resp.json()['results']
+    return {}
     
 def main():
     # # Get all atms within a 2 mile radius of Mclean
@@ -164,27 +164,45 @@ def main():
         }
     }
     cust = create_customer(cust_info)
+    print("Customer")
     print(cust)
+    print()
 
     # Create a credit card for said customer
     credit_acc = create_credit_account(cust['_id'])
+    print("Credit")
     print(credit_acc)
+    print()
 
     # Create a bill for said credit card
     bill = create_bill(credit_acc['_id'])
+    print("Bill")
     print(bill)
+    print()
 
     # Create a purchase for said credit card
     purchase = create_purchase(credit_acc['_id'])
+    print("Purchase")
     print(purchase)
+    print()
 
     # Create a deposit for said credit card
     deposit = create_deposit(credit_acc['_id'])
+    print("Deposit")
     print(deposit)
+    print()
 
     # Get an enterprise account
     ent_accounts = enterprise_get_account(credit_acc['_id'])
+    print("Enterprise")
     print(ent_accounts)
+    print()
+
+    # Delete said credit card
+    card_no_mo = delete_account(credit_acc['_id'])
+    print("Delete")
+    print(card_no_mo)
+    print()
 
 if __name__ == "__main__":
     main()
