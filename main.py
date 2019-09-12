@@ -107,7 +107,22 @@ def create_deposit(accountID):
     return make_post(url, payload)
 
 def enterprise_get_accounts():
-    pass
+    url = base_url + '/enterprise/accounts'
+
+    params = {
+        'key' : apiKey,
+    }
+    resp = requests.get(
+        url,
+        headers={'content-type':'application/json'},
+        params=params
+    )
+
+    if not resp.ok:
+        print(resp.reason)
+        return resp.json()
+    
+    return resp.json()['results']
 
 def main():
     # # Get all atms within a 2 mile radius of Mclean
@@ -148,6 +163,10 @@ def main():
     # Create a deposit for said credit card
     deposit = create_deposit(credit_acc['_id'])
     print(deposit)
+
+    # Get all enterprise accounts
+    ent_accounts = enterprise_get_accounts()
+    print(ent_accounts)
 
 if __name__ == "__main__":
     main()
